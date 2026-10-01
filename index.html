@@ -142,6 +142,11 @@
   .ask-btn.discord{width:100%;border:0;cursor:pointer;background:#5865f2;color:#fff;font-family:inherit;gap:4px}
   .ask-btn.discord:hover{background:#4752c4}
   .ask-copy{margin-top:10px;border:0;background:none;font:inherit;font-size:13px;color:var(--sub);text-decoration:underline;cursor:pointer}
+  .ask-btn,.ask-copy{position:relative}
+  .tip{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);background:#111;color:#fff;font-size:12px;font-weight:600;line-height:1;padding:7px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;text-decoration:none;animation:tipin .18s ease-out, tipout .25s ease-in 1.15s forwards}
+  .tip::after{content:"";position:absolute;left:50%;top:100%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#111}
+  @keyframes tipin{from{opacity:0;transform:translate(-50%,4px)}to{opacity:1;transform:translate(-50%,0)}}
+  @keyframes tipout{to{opacity:0;transform:translate(-50%,-4px)}}
   .ask-mail-txt{display:block;font-size:12px;color:var(--sub);margin-top:10px}
   @media (max-width:640px){ .ask-qr{display:none} }
   footer{border-top:1px solid var(--line);padding:20px var(--pad);font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -213,11 +218,11 @@
   <a id="mailFoot"></a>
 </footer>
 
-<script src="config.js?v=20261001f"></script>
-<script src="portfolio-data.js?v=20261001f"></script>
-<script src="scenes-bg.js?v=20261001f"></script>
-<script src="rig.js?v=20261001f"></script>
-<script src="scenes.js?v=20261001f"></script>
-<script src="app.js?v=20261001f"></script>
+<script src="config.js?v=20261001g"></script>
+<script src="portfolio-data.js?v=20261001g"></script>
+<script src="scenes-bg.js?v=20261001g"></script>
+<script src="rig.js?v=20261001g"></script>
+<script src="scenes.js?v=20261001g"></script>
+<script src="app.js?v=20261001g"></script>
 </body>
 </html>
