@@ -38,7 +38,7 @@
 
   // ════ ② 버츄얼: 방송 중 타이핑, 가끔 마우스 클릭 ════
   const VIRTUAL = {
-    rig: { x: 1290, y: 712, scale: 1.05, legs: true }, focus: [1290, 350],
+    rig: { x: 1290, y: 712, scale: 1.05, legs: true }, focus: [1290, 350], headroom: 60,
     tracks: {
       lSh: hold(74), lEl: hold(-122),
       rSh: [[0, 70, "C"], [38, 70, "S"], [43, 58, "S"], [52, 58, "S"], [56, 70], [100, 70]],
@@ -147,7 +147,10 @@
       const fx = sc.focus[0] + (v.bodyX || 0) * sc.rig.scale, fy = sc.focus[1];
       // 얼굴이 화면 오른쪽(가로 70%)에 오도록 → 왼쪽 아래 텍스트와 안 겹침
       const tx = fx - w * 0.70, ty = fy - h * 0.46;
-      const vx = Math.min(W - w, Math.max(0, tx * e)), vy = Math.min(H - h, Math.max(0, ty * e));
+      // 머리 위 여유(headroom): 칸이 가로로 길어 위아래가 잘릴 때, 잘리는 범위 안에서 장면을 아래로 내림
+      let sy = 0;
+      if (sc.headroom) { const r = svg.getBoundingClientRect(); if (r.width) sy = -Math.min(sc.headroom, Math.max(0, (H - W * r.height / r.width) / 2)); }
+      const vx = Math.min(W - w, Math.max(0, tx * e)), vy = Math.min(H - h, Math.max(0, ty * e)) + sy * (1 - e);
       svg.setAttribute("viewBox", `${vx.toFixed(1)} ${vy.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
       for (const key in opEls) for (const el of opEls[key]) el.setAttribute("opacity", v[key]);
       raf = requestAnimationFrame(frame);
