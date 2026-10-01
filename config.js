@@ -9,7 +9,8 @@ window.SITE_CONFIG = {
 
   contactEmail: "feelemon_studio@naver.com",
   kakaoUrl: "https://open.kakao.com/o/s31UJhQi",   // 카카오톡 오픈채팅 (문의하기 창)
-  discord: "Himi7487",                              // 디스코드 아이디 (누르면 복사)
+  discord: "Himi7487",                              // 디스코드 아이디 (복사용)
+  discordUrl: "https://discord.com/users/333744534523609098",   // 디스코드 프로필 링크
   youtube: "https://youtube.com/@feelemon_studio",
 
   // 카테고리 순서와 표시 이름 (시트의 '카테고리' 칸에 왼쪽 키를 적으면 됩니다)
