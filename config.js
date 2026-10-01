@@ -5,7 +5,7 @@
 window.SITE_CONFIG = {
   // 구글 시트 → 파일 → 공유 → 웹에 게시 → "쉼표로 구분된 값(.csv)" 으로 게시한 주소를 붙여넣으세요.
   // 비워두면 같은 폴더의 portfolio.csv 를 읽습니다.
-  sheetCsvUrl: "",
+  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqShD1Wb-IK-O_OjiPZizv6t1JXTzU5bQCc03Rg41vusWiRvb2_u7Cv3mkUrEis0J_G_ozTRoTUqSa/pub?output=csv",
 
   contactEmail: "gmlaks777@gmail.com",
   youtube: "https://youtube.com/@feelemon_studio",
