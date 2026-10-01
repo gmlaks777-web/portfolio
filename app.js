@@ -34,6 +34,10 @@
   const inCat = (it, k) => cats(it).includes(k);
   const catLabel = (v) => String(v || "").split(/[,/]/).map((x) => catLabel1(x.trim())).filter(Boolean).join(" · ");
 
+  // 업로드일: 2026-08-19 / 2026. 8. 19 / 2026/8/19 모두 인식 → 정렬키 2026-08-19, 표시 2026. 8. 19. (없으면 연도)
+  const dParts = (it) => (it["업로드일"] || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  const dateKey = (it) => { const m = dParts(it); return m ? `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}` : ""; };
+  const fmtDate = (it) => { const m = dParts(it); return m ? `${m[1]}. ${+m[2]}. ${+m[3]}.` : it["연도"] || ""; };
   const COLORS = ["#c0392b", "#2e86de", "#16a085", "#8e44ad", "#d35400", "#2c3e50", "#b7950b", "#c2185b", "#00897b", "#5d4037"];
   function ava(name, cls = "") {
     const n = name || "?"; let h = 0;
@@ -95,7 +99,7 @@
           <div class="info">${ava(it["클라이언트"])}
             <div><h3>${esc(it["제목"])}</h3>
               <div class="ch">${esc(it["클라이언트"])}</div>
-              <div class="mt">${esc([catLabel(it["카테고리"]), it["형식"], it["연도"]].filter(Boolean).join(" · "))}</div>
+              <div class="mt">${esc([catLabel(it["카테고리"]), it["형식"], fmtDate(it)].filter(Boolean).join(" · "))}</div>
             </div></div>
         </a>`).join("")}</div>`
       : `<p class="empty">${query ? "검색 결과가 없습니다." : "작업을 준비하고 있어요."}</p>`}</section>`;
@@ -118,7 +122,7 @@
     }
     const related = items.filter((x) => x !== it)
       .sort((a, b) => cats(b).some((k) => inCat(it, k)) - cats(a).some((k) => inCat(it, k)));
-    const meta = [catLabel(it["카테고리"]), it["연도"]].filter(Boolean).join(" · ");
+    const meta = [catLabel(it["카테고리"]), fmtDate(it)].filter(Boolean).join(" · ");
     $("#view").innerHTML = `<section class="watch">
       <div>
         <div class="player${id && isShort(it) ? " short" : ""}">${player}</div>
@@ -202,7 +206,7 @@
   // ── 데이터 로드: 구글 시트 → portfolio.csv → (파일을 직접 연 경우) portfolio-data.js 사본 ──
   function ingest(t) {
     items = parseCSV(t || "공개\n").filter((it) => yes(it["공개"])).map((it, i) => ({ ...it, _i: i }));
-    items.sort((a, b) => yes(b["대표"]) - yes(a["대표"]) || a._i - b._i);   // 대표작 먼저
+    items.sort((a, b) => dateKey(b).localeCompare(dateKey(a)) || a._i - b._i);   // 업로드일 최신순 (날짜 없으면 맨 뒤)
     route();
   }
   const load = (u) => fetch(u, { cache: "no-store" }).then((r) => { if (!r.ok) throw 0; return r.text(); });
