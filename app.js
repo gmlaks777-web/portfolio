@@ -141,7 +141,7 @@
             <div class="nm">${esc(it["클라이언트"])}<small>클라이언트</small></div>
             <div class="sp"></div>
             ${xId(it["링크"]) ? `<a class="pill light" href="${esc(it["링크"])}" target="_blank" rel="noopener">𝕏 원본 게시물</a>` : ""}
-            <a class="pill dark" href="mailto:${esc(C.contactEmail)}?subject=${encodeURIComponent("[문의] " + it["제목"] + " 관련")}">비슷한 작업 문의하기</a>
+            <button class="pill dark" data-ask="${esc(it["제목"])}">비슷한 작업 문의하기</button>
           </div>
           <div class="desc"><div class="mt">${esc(meta)}</div><p>${esc(it["설명"] || "")}</p></div>
         </div>
@@ -235,7 +235,25 @@
   window.addEventListener("hashchange", route);
 
   // 연락처
-  $("#mailLink").href = "mailto:" + C.contactEmail;
+  // 문의하기 창: 카카오톡 오픈채팅(+QR) / 이메일. 영상 페이지에서 열면 그 영상 제목을 메일 제목에 넣음
+  function openAsk(title) {
+    $("#askKakao").href = C.kakaoUrl || "#";
+    $("#askMail").href = `mailto:${C.contactEmail}?subject=${encodeURIComponent(title ? `[문의] ${title} 관련` : "[문의] 작업 문의")}`;
+    $("#askSub").textContent = title ? `「${title}」 같은 작업, 카카오톡 오픈채팅으로 편하게 물어보세요.` : "카카오톡 오픈채팅으로 편하게 물어보세요.";
+    $("#askMail").textContent = `✉ ${C.contactEmail}`;
+    $("#askDiscord").hidden = !C.discord; $("#askDiscordId").textContent = C.discord || "";
+    $("#askDiscordTip").textContent = "· 눌러서 아이디 복사";
+    $("#ask").hidden = false;
+  }
+  $("#askDiscord").addEventListener("click", () => {
+    const done = () => { $("#askDiscordTip").textContent = "· 복사됐어요!"; };
+    (navigator.clipboard ? navigator.clipboard.writeText(C.discord) : Promise.reject()).then(done).catch(() => { prompt("디스코드 아이디", C.discord); });
+  });
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-ask]"); if (b) { e.preventDefault(); openAsk(b.dataset.ask); return; }
+    if (e.target.closest("[data-close]")) $("#ask").hidden = true;
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("#ask").hidden = true; });
   $("#mailFoot").href = "mailto:" + C.contactEmail; $("#mailFoot").textContent = C.contactEmail;
   $("#ytLink").href = C.youtube; $("#yr").textContent = new Date().getFullYear();
 
