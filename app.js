@@ -245,14 +245,20 @@
     $("#askDiscordCopy").hidden = !C.discord; $("#askDiscordCopy").textContent = `디스코드 아이디 복사 (${C.discord})`;
     $("#ask").hidden = false;
   }
+  // 복사 완료 말풍선 (버튼 위에 잠깐 떴다 사라짐)
+  function tip(el, msg = "복사됐어요!") {
+    el.querySelectorAll(".tip").forEach((t) => t.remove());
+    const t = document.createElement("span"); t.className = "tip"; t.textContent = msg;
+    el.appendChild(t); setTimeout(() => t.remove(), 1400);
+  }
   // 이메일: 누르면 주소 복사 (메일 앱이 없는 PC에서도 바로 쓸 수 있게)
   $("#askMail").addEventListener("click", (e) => {
     e.preventDefault();
-    const done = () => { $("#askMail").textContent = `복사됐어요! ${C.contactEmail}`; };
+    const done = () => tip($("#askMail"));
     (navigator.clipboard ? navigator.clipboard.writeText(C.contactEmail) : Promise.reject()).then(done).catch(() => { prompt("이메일 주소", C.contactEmail); });
   });
   $("#askDiscordCopy").addEventListener("click", () => {
-    const done = () => { $("#askDiscordCopy").textContent = `복사됐어요! (${C.discord})`; };
+    const done = () => tip($("#askDiscordCopy"));
     (navigator.clipboard ? navigator.clipboard.writeText(C.discord) : Promise.reject()).then(done).catch(() => { prompt("디스코드 아이디", C.discord); });
   });
   document.addEventListener("click", (e) => {
