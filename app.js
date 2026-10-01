@@ -44,8 +44,8 @@
     if (id && isShort(it) && !it["썸네일"]) {
       // 세로 썸네일(oardefault, 720×1280) 가운데 + 같은 이미지 흐림 배경
       const v = `https://i.ytimg.com/vi/${id}/oardefault.jpg`, fb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-      return `<div class="thumb short"><img class="sbg" loading="lazy" src="${v}" onerror="this.src='${fb}'" alt="">` +
-        `<img class="sfg" loading="lazy" src="${v}" onerror="this.src='${fb}'" alt=""><span class="badge">숏폼</span></div>`;
+      return `<div class="thumb short"><img class="sbg" loading="lazy" src="${v}" onerror="this.src='${fb}'" onload="if(this.naturalWidth<200)this.src='${fb}'" alt="">` +
+        `<img class="sfg" loading="lazy" src="${v}" onerror="this.src='${fb}'" onload="if(this.naturalWidth<200)this.src='${fb}'" alt=""><span class="badge">숏폼</span></div>`;
     }
     const src = it["썸네일"] || (id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : "");
     const badge = id ? "" : it["링크"] ? `<span class="badge">링크 ↗</span>` : "";
