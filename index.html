@@ -141,7 +141,7 @@
   .ask-btn.mail:hover{background:var(--soft2)}
   .ask-btn.discord{width:100%;border:0;cursor:pointer;background:#5865f2;color:#fff;font-family:inherit;gap:4px}
   .ask-btn.discord:hover{background:#4752c4}
-  .ask-btn.discord span{font-weight:400;opacity:.85;font-size:13px}
+  .ask-copy{margin-top:10px;border:0;background:none;font:inherit;font-size:13px;color:var(--sub);text-decoration:underline;cursor:pointer}
   .ask-mail-txt{display:block;font-size:12px;color:var(--sub);margin-top:10px}
   @media (max-width:640px){ .ask-qr{display:none} }
   footer{border-top:1px solid var(--line);padding:20px var(--pad);font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -203,7 +203,8 @@
 <small>휴대폰 카메라로 스캔</small></div>
     <a class="ask-btn kakao" id="askKakao" target="_blank" rel="noopener">카카오톡 오픈채팅 열기</a>
     <a class="ask-btn mail" id="askMail">✉ 이메일로 문의</a>
-    <button class="ask-btn discord" id="askDiscord" type="button">디스코드 <b id="askDiscordId"></b> <span id="askDiscordTip">· 눌러서 아이디 복사</span></button>
+    <a class="ask-btn discord" id="askDiscord" target="_blank" rel="noopener">디스코드 <b id="askDiscordId"></b> 프로필 열기</a>
+    <button class="ask-copy" id="askDiscordCopy" type="button">디스코드 아이디 복사</button>
   </div>
 </div>
 
@@ -212,11 +213,11 @@
   <a id="mailFoot"></a>
 </footer>
 
-<script src="config.js?v=20261001d"></script>
-<script src="portfolio-data.js?v=20261001d"></script>
-<script src="scenes-bg.js?v=20261001d"></script>
-<script src="rig.js?v=20261001d"></script>
-<script src="scenes.js?v=20261001d"></script>
-<script src="app.js?v=20261001d"></script>
+<script src="config.js?v=20261001e"></script>
+<script src="portfolio-data.js?v=20261001e"></script>
+<script src="scenes-bg.js?v=20261001e"></script>
+<script src="rig.js?v=20261001e"></script>
+<script src="scenes.js?v=20261001e"></script>
+<script src="app.js?v=20261001e"></script>
 </body>
 </html>
