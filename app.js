@@ -5,7 +5,7 @@
   // ── CSV (따옴표·줄바꿈 포함 셀 지원) ──
   function parseCSV(text) {
     const rows = []; let row = [], cell = "", q = false;
-    text = text.replace(/^﻿/, "");
+    text = text.replace(/^\uFEFF/, "");
     for (let i = 0; i < text.length; i++) {
       const c = text[i];
       if (q) {
@@ -48,23 +48,42 @@
   let items = [], cat = "all", query = "";
 
   // ── 홈 ──
+  // 세부 필터: 채널(클라이언트) · 형식 — 시트 값으로 자동 생성
+  let sub = { ch: "", fmt: "" }, subCat = null;
   function filtered() {
     const q = query.toLowerCase();
     return items.filter((it) =>
       (cat === "all" || it["카테고리"] === cat) &&
+      (!sub.ch || it["클라이언트"] === sub.ch) &&
+      (!sub.fmt || (it["형식"] || "").split(/[,/]/).map((x) => x.trim()).includes(sub.fmt)) &&
       (!q || [it["제목"], it["클라이언트"], it["설명"], catLabel(it["카테고리"])].join(" ").toLowerCase().includes(q)));
+  }
+
+  function subChips() {
+    if (cat === "all") return "";
+    if (subCat !== cat) { sub = { ch: "", fmt: "" }; subCat = cat; }
+    const inCat = items.filter((it) => it["카테고리"] === cat);
+    const uniq = (arr) => [...new Set(arr.filter(Boolean))];
+    const chs = uniq(inCat.map((it) => it["클라이언트"]));
+    const fmts = uniq(inCat.flatMap((it) => (it["형식"] || "").split(/[,/]/).map((x) => x.trim())));
+    const row = (key, label, vals) => vals.length < 2 ? "" :
+      `<div class="subrow"><span class="sublabel">${label}</span>` +
+      [["", "전체"], ...vals.map((v) => [v, v])].map(([v, l]) =>
+        `<button class="sub${sub[key] === v ? " on" : ""}" data-sk="${key}" data-sv="${esc(v)}">${esc(l)}</button>`).join("") + `</div>`;
+    const html = row("ch", "채널", chs) + row("fmt", "형식", fmts);
+    return html ? `<div class="subchips">${html}</div>` : "";
   }
 
   function renderHome() {
     const list = filtered();
-    $("#view").innerHTML = `<section class="home">${list.length
+    $("#view").innerHTML = `${subChips()}<section class="home">${list.length
       ? `<div class="grid">${list.map((it) => `
         <a class="card" href="#/watch/${it._i}">
           ${thumbHTML(it)}
           <div class="info">${ava(it["클라이언트"])}
             <div><h3>${esc(it["제목"])}</h3>
               <div class="ch">${esc(it["클라이언트"])}</div>
-              <div class="mt">${esc([catLabel(it["카테고리"]), it["연도"]].filter(Boolean).join(" · "))}</div>
+              <div class="mt">${esc([catLabel(it["카테고리"]), it["형식"], it["연도"]].filter(Boolean).join(" · "))}</div>
             </div></div>
         </a>`).join("")}</div>`
       : `<p class="empty">검색 결과가 없습니다.</p>`}</section>`;
@@ -150,6 +169,10 @@
   }
 
   // ── 이벤트 ──
+  $("#view").addEventListener("click", (e) => {
+    const b = e.target.closest("button.sub"); if (!b) return;
+    sub[b.dataset.sk] = b.dataset.sv; renderHome();
+  });
   $("#searchForm").addEventListener("submit", (e) => {
     e.preventDefault(); query = $("#q").value.trim();
     if (/^#\/(all|c\/)/.test(location.hash)) renderHome(); else location.hash = "#/all";
