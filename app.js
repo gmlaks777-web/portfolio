@@ -123,6 +123,7 @@
       player = `<img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.6)">` +
         `<div class="open"><a class="pill dark" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">▶ 유튜브에서 보기</a></div>`;
     } else if (id) player = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1&origin=${encodeURIComponent(location.origin)}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen title="${esc(it["제목"])}"></iframe>`;
+    else if (xId(it["링크"]) && it["영상"]) player = `<video class="xv" data-x="${xId(it["링크"])}" controls playsinline loop preload="none" poster="${esc(it["썸네일"] || "")}" data-src="${esc(it["영상"])}"></video>`;
     else if (xId(it["링크"])) player = `<div class="xembed" data-x="${xId(it["링크"])}"><a class="pill dark" href="${esc(it["링크"])}" target="_blank" rel="noopener">𝕏에서 보기 ↗</a></div>`;
     else {
       const bg = it["썸네일"] ? `<img src="${esc(it["썸네일"])}" alt="" style="width:100%;height:100%;object-fit:cover">` : `<div class="ph"><b>${esc(it["제목"])}</b><small>${esc(it["클라이언트"])}</small></div>`;
@@ -133,12 +134,13 @@
     const meta = [catLabel(it["카테고리"]), fmtDate(it)].filter(Boolean).join(" · ");
     $("#view").innerHTML = `<section class="watch">
       <div>
-        <div class="player${id && isShort(it) ? " short" : ""}${!id && xId(it["링크"]) ? " x" : ""}">${player}</div>
+        <div class="player${id && isShort(it) ? " short" : ""}${!id && xId(it["링크"]) ? (it["영상"] ? " xvid" : " x") : ""}">${player}</div>
         <div class="w-body">
           <h1 class="w-title">${esc(it["제목"])}</h1>
           <div class="owner">${ava(it["클라이언트"])}
             <div class="nm">${esc(it["클라이언트"])}<small>클라이언트</small></div>
             <div class="sp"></div>
+            ${xId(it["링크"]) ? `<a class="pill light" href="${esc(it["링크"])}" target="_blank" rel="noopener">𝕏 원본 게시물</a>` : ""}
             <a class="pill dark" href="mailto:${esc(C.contactEmail)}?subject=${encodeURIComponent("[문의] " + it["제목"] + " 관련")}">비슷한 작업 문의하기</a>
           </div>
           <div class="desc"><div class="mt">${esc(meta)}</div><p>${esc(it["설명"] || "")}</p></div>
@@ -152,14 +154,29 @@
     loadX();
   }
 
-  // X 게시물 임베드 (공식 widgets.js) — 실패하면 'X에서 보기' 버튼만 남음
-  function loadX() {
-    const el = document.querySelector(".xembed"); if (!el) return;
+  // X 게시물: '영상' 칸(트위터 mp4 주소)이 있으면 직접 재생 — X 임베드는 몇 초 미리보기 뒤 'X에서 계속 시청'으로 막힘.
+  // video.twimg.com 은 다른 사이트 리퍼러를 막으므로 리퍼러 없이 받아서 재생, 실패하면 X 임베드로 대체
+  function embedTweet(el) {
     const go = () => window.twttr.widgets.createTweet(el.dataset.x, el, { lang: "ko", align: "center", dnt: true })
       .then((t) => { if (t && el.firstElementChild && el.firstElementChild.tagName === "A") el.firstElementChild.remove(); });
     if (window.twttr && window.twttr.widgets) return go();
     const sc = document.createElement("script"); sc.src = "https://platform.twitter.com/widgets.js"; sc.async = true;
     sc.onload = () => window.twttr.ready(go); document.head.appendChild(sc);
+  }
+  function loadX() {
+    const vid = document.querySelector("video.xv");
+    if (vid) {
+      fetch(vid.dataset.src, { referrerPolicy: "no-referrer" })
+        .then((r) => { if (!r.ok) throw 0; return r.blob(); })
+        .then((b) => { vid.src = URL.createObjectURL(b); vid.play().catch(() => { vid.muted = true; vid.play().catch(() => {}); }); })
+        .catch(() => {
+          const p = vid.parentElement; p.className = "player x";
+          p.innerHTML = `<div class="xembed" data-x="${vid.dataset.x}"></div>`;
+          embedTweet(p.firstElementChild);
+        });
+      return;
+    }
+    const el = document.querySelector(".xembed"); if (el) embedTweet(el);
   }
 
   // ── 첫 화면: 4칸 대문 ──
