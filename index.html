@@ -63,6 +63,13 @@
 
   /* ── home grid ── */
   .home{padding:12px var(--pad) 48px}
+  .subchips{padding:2px var(--pad) 4px;display:flex;flex-direction:column;gap:8px}
+  .subrow{display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none}
+  .subrow::-webkit-scrollbar{display:none}
+  .sublabel{flex-shrink:0;font-size:12px;font-weight:600;color:var(--sub);width:34px}
+  .sub{flex-shrink:0;height:28px;padding:0 12px;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:13px;cursor:pointer}
+  .sub:hover{background:var(--soft)}
+  .sub.on{background:var(--ink);color:#fff;border-color:var(--ink)}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:40px 16px}
   .card{display:block;cursor:pointer}
   .thumb{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--soft)}
