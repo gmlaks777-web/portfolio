@@ -7,8 +7,9 @@ window.SITE_CONFIG = {
   // 비워두면 같은 폴더의 portfolio.csv 를 읽습니다.
   sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqShD1Wb-IK-O_OjiPZizv6t1JXTzU5bQCc03Rg41vusWiRvb2_u7Cv3mkUrEis0J_G_ozTRoTUqSa/pub?output=csv",
 
-  contactEmail: "gmlaks777@gmail.com",
+  contactEmail: "feelemon_studio@naver.com",
   kakaoUrl: "https://open.kakao.com/o/s31UJhQi",   // 카카오톡 오픈채팅 (문의하기 창)
+  discord: "Himi7487",                              // 디스코드 아이디 (누르면 복사)
   youtube: "https://youtube.com/@feelemon_studio",
 
   // 카테고리 순서와 표시 이름 (시트의 '카테고리' 칸에 왼쪽 키를 적으면 됩니다)
