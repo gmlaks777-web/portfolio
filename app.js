@@ -35,10 +35,11 @@
   const inCat = (it, k) => cats(it).includes(k);
   const catLabel = (v) => String(v || "").split(/[,/]/).map((x) => catLabel1(x.trim())).filter(Boolean).join(" · ");
 
-  // 업로드일: 2026-08-19 / 2026. 8. 19 / 2026/8/19 모두 인식 → 정렬키 2026-08-19, 표시 2026. 8. 19. (없으면 연도)
-  const dParts = (it) => (it["업로드일"] || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
-  const dateKey = (it) => { const m = dParts(it); return m ? `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}` : ""; };
-  const fmtDate = (it) => { const m = dParts(it); return m ? `${m[1]}. ${+m[2]}. ${+m[3]}.` : it["연도"] || ""; };
+  // 업로드일: 2026-08-19 / 2026. 8. 19 / 2026/8/19 모두 인식 → 정렬키 2026-08-19, 표시 2026. 8. 19.
+  // 연도만 적으면(예: 2025) 그 해의 맨 뒤로 정렬되고 '2025'로 표시. 비우면 연도 칸을 표시하고 맨 뒤로
+  const dParts = (it) => (it["업로드일"] || "").match(/(\d{4})(?:\D+(\d{1,2})\D+(\d{1,2}))?/);
+  const dateKey = (it) => { const m = dParts(it); return !m ? "" : m[2] ? `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}` : m[1]; };
+  const fmtDate = (it) => { const m = dParts(it); return !m ? it["연도"] || "" : m[2] ? `${m[1]}. ${+m[2]}. ${+m[3]}.` : m[1]; };
   const COLORS = ["#c0392b", "#2e86de", "#16a085", "#8e44ad", "#d35400", "#2c3e50", "#b7950b", "#c2185b", "#00897b", "#5d4037"];
   function ava(name, cls = "") {
     const n = name || "?"; let h = 0;
