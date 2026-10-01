@@ -245,6 +245,12 @@
     $("#askDiscordCopy").hidden = !C.discord; $("#askDiscordCopy").textContent = `디스코드 아이디 복사 (${C.discord})`;
     $("#ask").hidden = false;
   }
+  // 이메일: 누르면 주소 복사 (메일 앱이 없는 PC에서도 바로 쓸 수 있게)
+  $("#askMail").addEventListener("click", (e) => {
+    e.preventDefault();
+    const done = () => { $("#askMail").textContent = `복사됐어요! ${C.contactEmail}`; };
+    (navigator.clipboard ? navigator.clipboard.writeText(C.contactEmail) : Promise.reject()).then(done).catch(() => { prompt("이메일 주소", C.contactEmail); });
+  });
   $("#askDiscordCopy").addEventListener("click", () => {
     const done = () => { $("#askDiscordCopy").textContent = `복사됐어요! (${C.discord})`; };
     (navigator.clipboard ? navigator.clipboard.writeText(C.discord) : Promise.reject()).then(done).catch(() => { prompt("디스코드 아이디", C.discord); });
