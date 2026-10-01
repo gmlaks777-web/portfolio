@@ -1,5 +1,15 @@
 (function () {
   const C = window.SITE_CONFIG;
+
+  // 새 버전 자동 반영: 브라우저가 예전 index.html 을 기억하고 있으면(최대 10분) 최신본과 버전 태그를 비교해 한 번 새로고침
+  (() => {
+    const me = [...document.scripts].find((s) => /app\.js\?v=/.test(s.src)); if (!me || location.protocol === "file:") return;
+    const v = me.src.split("?v=")[1];
+    fetch(location.pathname + "?_=" + Date.now(), { cache: "no-store" }).then((r) => r.text()).then((t) => {
+      const m = t.match(/app\.js\?v=([\w-]+)/);
+      if (m && m[1] !== v && sessionStorage.getItem("reloadedFor") !== m[1]) { sessionStorage.setItem("reloadedFor", m[1]); location.reload(); }
+    }).catch(() => {});
+  })();
   const $ = (s) => document.querySelector(s);
 
   // ── CSV (따옴표·줄바꿈 포함 셀 지원) ──
@@ -243,7 +253,6 @@
     $("#askSub").textContent = title ? `「${title}」 같은 작업, 카카오톡 오픈채팅으로 편하게 물어보세요.` : "카카오톡 오픈채팅으로 편하게 물어보세요.";
     $("#askMail").textContent = `✉ ${C.contactEmail}`;
     $("#askDiscord").hidden = !C.discordUrl; $("#askDiscord").href = C.discordUrl || "#"; $("#askDiscordId").textContent = C.discord || "";
-    $("#askDiscordCopy").hidden = !C.discord; $("#askDiscordCopy").textContent = `디스코드 아이디 복사 (${C.discord})`;
     $("#ask").hidden = false;
   }
   // 복사 완료 말풍선 (버튼 위에 잠깐 떴다 사라짐)
@@ -257,10 +266,6 @@
     e.preventDefault();
     const done = () => tip($("#askMail"));
     (navigator.clipboard ? navigator.clipboard.writeText(C.contactEmail) : Promise.reject()).then(done).catch(() => { prompt("이메일 주소", C.contactEmail); });
-  });
-  $("#askDiscordCopy").addEventListener("click", () => {
-    const done = () => tip($("#askDiscordCopy"));
-    (navigator.clipboard ? navigator.clipboard.writeText(C.discord) : Promise.reject()).then(done).catch(() => { prompt("디스코드 아이디", C.discord); });
   });
   document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-ask]"); if (b) { e.preventDefault(); openAsk(b.dataset.ask); return; }
