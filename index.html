@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FEEL LEMON — 필레몬 스튜디오 포트폴리오</title>
+<meta name="description" content="필레몬 스튜디오 포트폴리오 — 기업·기관 영상, 크리에이터 편집, AI·모션그래픽">
+<link rel="icon" href="mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonts-archive/Paperlogy/Paperlogy.css">
+<style>
+  :root{
+    --bg:#ffffff; --ink:#0f0f0f; --sub:#606060; --soft:#f2f2f2; --soft2:#e5e5e5; --line:#e5e5e5;
+    --accent:#f9cc14;
+    --font:"Paperlogy",-apple-system,system-ui,sans-serif;
+    --pad:clamp(16px,2.4vw,32px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-weight:400;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button,input{font:inherit;color:inherit}
+  img{display:block;max-width:100%}
+
+  /* ── top bar ── */
+  .top{position:sticky;top:0;z-index:30;background:var(--bg)}
+  .bar{display:flex;align-items:center;gap:16px;height:60px;padding:0 var(--pad)}
+  .bar .logo{flex-shrink:0;display:flex;align-items:center}
+  .bar .logo img{height:28px;width:auto}
+  .search{flex:1;max-width:560px;margin:0 auto;display:flex;height:40px}
+  .search input{flex:1;min-width:0;border:1px solid #ccc;border-right:0;border-radius:40px 0 0 40px;padding:0 18px;font-size:15px;outline:none;background:#fff}
+  .search input:focus{border-color:#1c62b9}
+  .search button{width:62px;border:1px solid #ccc;border-radius:0 40px 40px 0;background:#f8f8f8;cursor:pointer;display:grid;place-items:center}
+  .search svg{width:20px;height:20px}
+  .actions{display:flex;gap:8px;flex-shrink:0}
+  .pill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 16px;border-radius:18px;font-size:14px;font-weight:500;cursor:pointer;border:0;white-space:nowrap}
+  .pill.dark{background:var(--ink);color:#fff}
+  .pill.light{background:var(--soft)}
+  .pill.light:hover{background:var(--soft2)}
+
+  .chips{display:flex;gap:12px;padding:10px var(--pad) 12px;overflow-x:auto;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chips a{flex-shrink:0;display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:8px;background:var(--soft);font-size:14px;font-weight:500;white-space:nowrap}
+  .chips a:hover{background:var(--soft2)}
+  .chips a.on{background:var(--ink);color:#fff}
+
+  /* ── 첫 화면 4칸 ── */
+  .gate{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px var(--pad) 0;height:calc(100vh - 140px);min-height:520px}
+  .tile{position:relative;overflow:hidden;border-radius:16px;background:var(--tc);color:#fff;display:flex;align-items:flex-end}
+  .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+  .tile.has-img::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75),rgba(0,0,0,.1) 60%)}
+  .tile:hover img{transform:scale(1.04)}
+  .tile.ink{color:var(--ink)}
+  .t-in{position:relative;z-index:1;padding:clamp(20px,3vw,40px);width:100%}
+  .t-en{font-size:12px;font-weight:600;letter-spacing:.2em;opacity:.7}
+  .tile h2{font-size:clamp(36px,5vw,72px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-top:6px}
+  .tile p{font-size:15px;opacity:.85;margin-top:8px;word-break:keep-all}
+  .t-n{display:inline-block;margin-top:16px;font-size:14px;font-weight:600;padding:8px 14px;border-radius:20px;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);transition:.2s}
+  .tile.ink .t-n{background:rgba(0,0,0,.08)}
+  .tile:hover .t-n{background:#fff;color:var(--ink)}
+  .gate-all{text-align:center;padding:24px 0 40px}
+  .tile .scene{position:absolute;inset:0}
+  .tile.has-scene .t-in{max-width:52%;pointer-events:none}
+  .tile.has-scene .t-n{pointer-events:auto}
+
+  /* ── home grid ── */
+  .home{padding:12px var(--pad) 48px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:40px 16px}
+  .card{display:block;cursor:pointer}
+  .thumb{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--soft)}
+  .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+  .card:hover .thumb img{transform:scale(1.02)}
+  .ph{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:16px 18px;
+      background:linear-gradient(135deg,#f4f4f4,#e9e9e9)}
+  .ph b{font-size:clamp(18px,1.6vw,22px);font-weight:700;line-height:1.25;word-break:keep-all;letter-spacing:-.01em}
+  .ph small{font-size:12px;color:var(--sub);margin-top:6px}
+  .badge{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.8);color:#fff;font-size:12px;font-weight:500;padding:2px 6px;border-radius:4px}
+  .info{display:flex;gap:12px;margin-top:12px}
+  .ava{flex-shrink:0;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:600;color:#fff}
+  .info h3{font-size:16px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all}
+  .info .ch,.info .mt{font-size:14px;color:var(--sub);margin-top:2px}
+  .empty{color:var(--sub);padding:60px 0;text-align:center}
+
+  /* ── watch page ── */
+  .watch{display:grid;grid-template-columns:minmax(0,1fr) 402px;gap:24px;padding:12px var(--pad) 48px;max-width:1760px;margin:0 auto}
+  .player{position:relative;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
+  .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .player .ph{border-radius:12px}
+  .player .ph b{font-size:clamp(24px,3.4vw,48px)}
+  .player .open{position:absolute;inset:0;display:grid;place-items:center}
+  .w-title{font-size:20px;font-weight:700;line-height:1.4;margin-top:12px;word-break:keep-all}
+  .owner{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .owner .ava{width:40px;height:40px;font-size:16px}
+  .owner .nm{font-size:16px;font-weight:600}
+  .owner .nm small{display:block;font-size:12px;font-weight:400;color:var(--sub)}
+  .owner .sp{flex:1}
+  .desc{background:var(--soft);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:14px}
+  .desc .mt{font-weight:600;margin-bottom:4px}
+  .desc p{white-space:pre-line;word-break:keep-all}
+  .side h4{font-size:16px;font-weight:600;margin-bottom:12px}
+  .rel{display:flex;gap:8px;margin-bottom:10px;cursor:pointer}
+  .rel .thumb{width:168px;flex-shrink:0;border-radius:8px}
+  .rel .ph{padding:8px 10px}
+  .rel .ph b{font-size:12px}
+  .rel .ph small{display:none}
+  .rel h5{font-size:14px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all}
+  .rel span{display:block;font-size:12px;color:var(--sub);margin-top:4px}
+
+  footer{border-top:1px solid var(--line);padding:20px var(--pad);font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  footer a:hover{color:var(--ink)}
+
+  @media (max-width:1000px){
+    .watch{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .bar{gap:10px}
+    .search{display:none}
+    .bar.searching .search{display:flex}
+    .bar.searching .logo,.bar.searching .actions{display:none}
+    .actions .pill.dark span{display:none}
+    .actions .s-toggle{display:inline-flex}
+    .grid{grid-template-columns:1fr;gap:28px}
+    .home,.watch{padding-left:0;padding-right:0}
+    .home .thumb,.watch .player{border-radius:0}
+    .info,.watch>div{padding-left:12px;padding-right:12px}
+    .watch>div:first-child{padding:0}
+    .watch .w-body{padding:0 12px}
+    .rel .thumb{width:150px}
+    .gate{grid-template-columns:1fr;height:auto;min-height:0;padding:4px 12px 0}
+    .tile{aspect-ratio:16/10}
+    .actions{margin-left:auto}
+    .side{padding:0 12px}
+  }
+  .s-toggle{display:none}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <header class="bar" id="bar">
+    <a class="logo" href="#/" aria-label="홈"><img src="logo.svg" alt="FEEL LEMON"></a>
+    <form class="search" id="searchForm" role="search">
+      <input id="q" type="search" placeholder="검색 (제목, 클라이언트)" aria-label="검색">
+      <button type="submit" aria-label="검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+    </form>
+    <div class="actions">
+      <button class="pill light s-toggle" id="sToggle" aria-label="검색 열기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+      <a class="pill light" id="ytLink" target="_blank" rel="noopener">YouTube</a>
+      <a class="pill dark" id="mailLink">✉<span>&nbsp;문의하기</span></a>
+    </div>
+  </header>
+  <nav class="chips" id="chips"></nav>
+</div>
+
+<main id="view"></main>
+
+<footer>
+  <span>© <span id="yr"></span> Philemon Studio · 필레몬 스튜디오</span>
+  <a id="mailFoot"></a>
+</footer>
+
+<script src="config.js"></script>
+<script src="portfolio-data.js"></script>
+<script src="scenes-bg.js"></script>
+<script src="rig.js"></script>
+<script src="scenes.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
