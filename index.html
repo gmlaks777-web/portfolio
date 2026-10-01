@@ -123,6 +123,27 @@
   .player.x{aspect-ratio:auto;min-height:320px;background:var(--soft);display:flex;align-items:center;justify-content:center;padding:12px}
   .player.x .xembed{width:100%;max-width:560px;display:flex;justify-content:center}
   .player.short{aspect-ratio:9/16;width:auto;height:min(78vh,820px);max-width:100%;margin:0 auto}
+  /* 문의하기 창 */
+  .ask{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px}
+  .ask[hidden]{display:none}
+  .ask-bg{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+  .ask-box{position:relative;width:100%;max-width:360px;background:#fff;border-radius:20px;padding:28px 24px 22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .ask-x{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:var(--sub)}
+  .ask-box h3{font-size:20px;font-weight:700}
+  .ask-sub{font-size:14px;color:var(--sub);margin-top:6px;word-break:keep-all}
+  .ask-qr{margin:18px auto 16px;width:200px}
+  .ask-qr .qr{width:200px;height:200px;display:block;border-radius:12px;border:1px solid var(--line)}
+  .ask-qr small{display:block;font-size:12px;color:var(--sub);margin-top:6px}
+  .ask-btn{display:flex;align-items:center;justify-content:center;height:48px;border-radius:12px;font-size:15px;font-weight:600;margin-top:8px}
+  .ask-btn.kakao{background:#fee500;color:#191919}
+  .ask-btn.kakao:hover{background:#f5dc00}
+  .ask-btn.mail{background:var(--soft)}
+  .ask-btn.mail:hover{background:var(--soft2)}
+  .ask-btn.discord{width:100%;border:0;cursor:pointer;background:#5865f2;color:#fff;font-family:inherit;gap:4px}
+  .ask-btn.discord:hover{background:#4752c4}
+  .ask-btn.discord span{font-weight:400;opacity:.85;font-size:13px}
+  .ask-mail-txt{display:block;font-size:12px;color:var(--sub);margin-top:10px}
+  @media (max-width:640px){ .ask-qr{display:none} }
   footer{border-top:1px solid var(--line);padding:20px var(--pad);font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   footer a:hover{color:var(--ink)}
 
@@ -164,7 +185,7 @@
     <div class="actions">
       <button class="pill light s-toggle" id="sToggle" aria-label="검색 열기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
       <a class="pill light" id="ytLink" target="_blank" rel="noopener">YouTube</a>
-      <a class="pill dark" id="mailLink">✉<span>&nbsp;문의하기</span></a>
+      <button class="pill dark" id="mailLink" data-ask>✉<span>&nbsp;문의하기</span></button>
     </div>
   </header>
   <nav class="chips" id="chips"></nav>
@@ -172,16 +193,30 @@
 
 <main id="view"></main>
 
+<div class="ask" id="ask" hidden>
+  <div class="ask-bg" data-close></div>
+  <div class="ask-box" role="dialog" aria-modal="true" aria-labelledby="askTitle">
+    <button class="ask-x" data-close aria-label="닫기">×</button>
+    <h3 id="askTitle">작업 문의하기</h3>
+    <p class="ask-sub" id="askSub">카카오톡 오픈채팅으로 편하게 물어보세요.</p>
+    <div class="ask-qr"><svg class="qr" role="img" aria-label="카카오톡 오픈채팅 QR" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33"><path stroke="#0f0f0f" d="M2 2.5h7m2 0h1m1 0h1m3 0h2m1 0h1m1 0h1m1 0h7m-29 1h1m5 0h1m1 0h4m1 0h2m1 0h2m2 0h1m1 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m2 0h2m1 0h1m4 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m3 0h1m3 0h2m1 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m1 0h1m3 0h6m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m2 0h1m5 0h1m1 0h1m2 0h1m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h1m1 0h3m1 0h3m2 0h2m-21 1h1m5 0h1m1 0h1m1 0h1m1 0h1m4 0h3m1 0h2m2 0h3m-28 1h1m1 0h3m2 0h1m5 0h1m2 0h4m4 0h1m1 0h2m-27 1h3m1 0h2m1 0h2m1 0h5m1 0h1m2 0h1m1 0h1m-22 1h5m5 0h3m5 0h1m2 0h2m1 0h1m-26 1h4m1 0h2m1 0h2m2 0h2m1 0h2m2 0h2m1 0h2m4 0h1m-29 1h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m7 0h2m1 0h3m2 0h2m-26 1h2m1 0h7m2 0h4m2 0h6m-27 1h1m2 0h1m3 0h2m3 0h1m3 0h1m2 0h1m1 0h1m1 0h2m1 0h1m1 0h1m-29 1h2m2 0h1m1 0h1m1 0h2m2 0h1m4 0h3m5 0h2m-27 1h6m3 0h1m2 0h5m2 0h1m2 0h3m1 0h3m-29 1h2m3 0h2m1 0h1m1 0h2m3 0h1m2 0h2m1 0h5m2 0h1m-29 1h1m1 0h2m4 0h2m1 0h1m1 0h1m5 0h3m2 0h1m-25 1h1m1 0h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h11m1 0h3m-21 1h1m1 0h3m1 0h1m5 0h1m3 0h2m-26 1h7m8 0h1m2 0h3m1 0h1m1 0h3m-27 1h1m5 0h1m4 0h1m2 0h1m4 0h2m3 0h1m2 0h1m-28 1h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h2m1 0h2m1 0h7m1 0h2m-29 1h1m1 0h3m1 0h1m6 0h4m2 0h1m1 0h1m1 0h1m1 0h2m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m2 0h1m2 0h1m5 0h7m-28 1h1m5 0h1m2 0h3m2 0h3m6 0h1m1 0h2m1 0h1m-29 1h7m1 0h2m1 0h2m1 0h1m4 0h1m2 0h2m2 0h1"/></svg>
+<small>휴대폰 카메라로 스캔</small></div>
+    <a class="ask-btn kakao" id="askKakao" target="_blank" rel="noopener">카카오톡 오픈채팅 열기</a>
+    <a class="ask-btn mail" id="askMail">✉ 이메일로 문의</a>
+    <button class="ask-btn discord" id="askDiscord" type="button">디스코드 <b id="askDiscordId"></b> <span id="askDiscordTip">· 눌러서 아이디 복사</span></button>
+  </div>
+</div>
+
 <footer>
   <span>© <span id="yr"></span> Philemon Studio · 필레몬 스튜디오</span>
   <a id="mailFoot"></a>
 </footer>
 
-<script src="config.js?v=20261001b"></script>
-<script src="portfolio-data.js?v=20261001b"></script>
-<script src="scenes-bg.js?v=20261001b"></script>
-<script src="rig.js?v=20261001b"></script>
-<script src="scenes.js?v=20261001b"></script>
-<script src="app.js?v=20261001b"></script>
+<script src="config.js?v=20261001d"></script>
+<script src="portfolio-data.js?v=20261001d"></script>
+<script src="scenes-bg.js?v=20261001d"></script>
+<script src="rig.js?v=20261001d"></script>
+<script src="scenes.js?v=20261001d"></script>
+<script src="app.js?v=20261001d"></script>
 </body>
 </html>
