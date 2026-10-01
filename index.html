@@ -117,6 +117,10 @@
   .thumb.short .sbg{position:absolute;inset:-10%;width:120%;height:120%;object-fit:cover;filter:blur(18px) brightness(.55);transform:none!important}
   .thumb.short .sfg{position:absolute;top:0;bottom:0;left:50%;width:auto;height:100%;aspect-ratio:9/16;transform:translateX(-50%);object-fit:cover}
   .card:hover .thumb.short .sfg{transform:translateX(-50%) scale(1.03)}
+  .thumb.fit .sfg{left:0;width:100%;aspect-ratio:auto;transform:none;object-fit:contain}
+  .card:hover .thumb.fit .sfg{transform:scale(1.03)}
+  .player.x{aspect-ratio:auto;min-height:320px;background:var(--soft);display:flex;align-items:center;justify-content:center;padding:12px}
+  .player.x .xembed{width:100%;max-width:560px;display:flex;justify-content:center}
   .player.short{aspect-ratio:9/16;width:auto;height:min(78vh,820px);max-width:100%;margin:0 auto}
   footer{border-top:1px solid var(--line);padding:20px var(--pad);font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   footer a:hover{color:var(--ink)}
