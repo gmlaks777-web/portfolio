@@ -160,7 +160,7 @@
       const bg = scene ? "" : tileBg(c.key);
       return `<a class="tile${bg ? " has-img" : ""}${scene ? " has-scene" : ""}${c.dark && !bg ? " ink" : ""}" href="#/c/${encodeURIComponent(c.key)}" style="--tc:${c.color}"${scene ? " data-scene-tile" : ""}>
         ${scene ? `<div class="scene" data-scene="${esc(c.scene)}"></div>` : bg ? `<img src="${esc(bg)}" alt="">` : ""}
-        <div class="t-in"><span class="t-en">${esc(c.en || "")}</span><h2>${esc(c.label)}</h2><p>${esc(c.desc)}</p><span class="t-n">${n ? `작업 ${n}개 →` : "준비 중"}</span></div>
+        <div class="t-in"><span class="t-en">${esc(c.en || "")}</span><h2${c.label.length > 4 ? ' class="long"' : ""}>${esc(c.label)}</h2><p>${esc(c.desc)}</p><span class="t-n">${n ? `작업 ${n}개 →` : "준비 중"}</span></div>
       </a>`;
     }).join("")}</section>
     <div class="gate-all"><a class="pill light" href="#/all">전체 작업 보기</a></div>`;
