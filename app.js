@@ -28,7 +28,11 @@
   const ytId = (url) => { const m = (url || "").match(/(?:youtu\.be\/|v=|shorts\/|embed\/|live\/)([\w-]{11})/); return m ? m[1] : null; };
   const yes = (v) => /^(y|yes|o|true|1|ㅇ|공개)$/i.test(v || "");
   const esc = (s) => String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const catLabel = (k) => (C.categories.find((c) => c.key === k) || {}).label || k;
+  const catLabel1 = (k) => (C.categories.find((c) => c.key === k) || {}).label || k;
+  // 카테고리 칸에 "버츄얼, AI" 처럼 여러 개 적으면 양쪽 모두에 보임
+  const cats = (it) => (it["카테고리"] || "").split(/[,/]/).map((x) => x.trim()).filter(Boolean);
+  const inCat = (it, k) => cats(it).includes(k);
+  const catLabel = (v) => String(v || "").split(/[,/]/).map((x) => catLabel1(x.trim())).filter(Boolean).join(" · ");
 
   const COLORS = ["#c0392b", "#2e86de", "#16a085", "#8e44ad", "#d35400", "#2c3e50", "#b7950b", "#c2185b", "#00897b", "#5d4037"];
   function ava(name, cls = "") {
@@ -61,7 +65,7 @@
   function filtered() {
     const q = query.toLowerCase();
     return items.filter((it) =>
-      (cat === "all" || it["카테고리"] === cat) &&
+      (cat === "all" || inCat(it, cat)) &&
       (!sub.ch || it["클라이언트"] === sub.ch) &&
       (!sub.fmt || (it["형식"] || "").split(/[,/]/).map((x) => x.trim()).includes(sub.fmt)) &&
       (!q || [it["제목"], it["클라이언트"], it["설명"], catLabel(it["카테고리"])].join(" ").toLowerCase().includes(q)));
@@ -70,10 +74,10 @@
   function subChips() {
     if (cat === "all") return "";
     if (subCat !== cat) { sub = { ch: "", fmt: "" }; subCat = cat; }
-    const inCat = items.filter((it) => it["카테고리"] === cat);
+    const catItems = items.filter((it) => inCat(it, cat));
     const uniq = (arr) => [...new Set(arr.filter(Boolean))];
-    const chs = uniq(inCat.map((it) => it["클라이언트"]));
-    const fmts = uniq(inCat.flatMap((it) => (it["형식"] || "").split(/[,/]/).map((x) => x.trim())));
+    const chs = uniq(catItems.map((it) => it["클라이언트"]));
+    const fmts = uniq(catItems.flatMap((it) => (it["형식"] || "").split(/[,/]/).map((x) => x.trim())));
     const row = (key, label, vals) => vals.length < 2 ? "" :
       `<div class="subrow"><span class="sublabel">${label}</span>` +
       [["", "전체"], ...vals.map((v) => [v, v])].map(([v, l]) =>
@@ -113,7 +117,7 @@
       player = bg + (it["링크"] ? `<div class="open"><a class="pill dark" href="${esc(it["링크"])}" target="_blank" rel="noopener">열어보기 ↗</a></div>` : "");
     }
     const related = items.filter((x) => x !== it)
-      .sort((a, b) => (b["카테고리"] === it["카테고리"]) - (a["카테고리"] === it["카테고리"]));
+      .sort((a, b) => cats(b).some((k) => inCat(it, k)) - cats(a).some((k) => inCat(it, k)));
     const meta = [catLabel(it["카테고리"]), it["연도"]].filter(Boolean).join(" · ");
     $("#view").innerHTML = `<section class="watch">
       <div>
@@ -137,7 +141,7 @@
 
   // ── 첫 화면: 4칸 대문 ──
   function tileBg(key) {
-    const list = items.filter((it) => it["카테고리"] === key);
+    const list = items.filter((it) => inCat(it, key));
     const pick = list.find((it) => yes(it["대표"]) && (it["썸네일"] || ytId(it["링크"]))) || list.find((it) => it["썸네일"] || ytId(it["링크"]));
     if (!pick) return "";
     return pick["썸네일"] || `https://i.ytimg.com/vi/${ytId(pick["링크"])}/hqdefault.jpg`;
@@ -147,7 +151,7 @@
     mounts.forEach((m) => m.destroy()); mounts = [];
     const live = !!window.FeelemonScenes;
     $("#view").innerHTML = `<section class="gate">${C.categories.map((c) => {
-      const n = items.filter((it) => it["카테고리"] === c.key).length;
+      const n = items.filter((it) => inCat(it, c.key)).length;
       const scene = live && c.scene;
       const bg = scene ? "" : tileBg(c.key);
       return `<a class="tile${bg ? " has-img" : ""}${scene ? " has-scene" : ""}${c.dark && !bg ? " ink" : ""}" href="#/c/${encodeURIComponent(c.key)}" style="--tc:${c.color}"${scene ? " data-scene-tile" : ""}>
@@ -160,7 +164,7 @@
   }
 
   function renderChips() {
-    const has = (k) => items.some((it) => it["카테고리"] === k);
+    const has = (k) => items.some((it) => inCat(it, k));
     const b = (k, l) => `<a href="${k === "all" ? "#/all" : "#/c/" + encodeURIComponent(k)}" class="${cat === k ? "on" : ""}">${esc(l)}</a>`;
     $("#chips").innerHTML = b("all", "전체") + C.categories.filter((c) => has(c.key)).map((c) => b(c.key, c.label)).join("");
   }
