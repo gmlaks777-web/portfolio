@@ -37,8 +37,16 @@
     return `<div class="ava ${cls}" style="background:${COLORS[h % COLORS.length]}">${esc(n.trim()[0] || "?")}</div>`;
   }
 
+  // 숏폼 판별: 링크가 /shorts/ 이거나 형식에 '숏폼'·'쇼츠'
+  const isShort = (it) => /\/shorts\//.test(it["링크"] || "") || /숏폼|쇼츠|shorts/i.test(it["형식"] || "");
   function thumbHTML(it, small) {
     const id = ytId(it["링크"]);
+    if (id && isShort(it) && !it["썸네일"]) {
+      // 세로 썸네일(oardefault, 720×1280) 가운데 + 같은 이미지 흐림 배경
+      const v = `https://i.ytimg.com/vi/${id}/oardefault.jpg`, fb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+      return `<div class="thumb short"><img class="sbg" loading="lazy" src="${v}" onerror="this.src='${fb}'" alt="">` +
+        `<img class="sfg" loading="lazy" src="${v}" onerror="this.src='${fb}'" alt=""><span class="badge">숏폼</span></div>`;
+    }
     const src = it["썸네일"] || (id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : "");
     const badge = id ? "" : it["링크"] ? `<span class="badge">링크 ↗</span>` : "";
     if (src) return `<div class="thumb"><img loading="lazy" src="${esc(src)}" alt="">${badge}</div>`;
@@ -109,7 +117,7 @@
     const meta = [catLabel(it["카테고리"]), it["연도"]].filter(Boolean).join(" · ");
     $("#view").innerHTML = `<section class="watch">
       <div>
-        <div class="player">${player}</div>
+        <div class="player${id && isShort(it) ? " short" : ""}">${player}</div>
         <div class="w-body">
           <h1 class="w-title">${esc(it["제목"])}</h1>
           <div class="owner">${ava(it["클라이언트"])}
