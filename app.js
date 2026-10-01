@@ -26,6 +26,7 @@
   }
 
   const ytId = (url) => { const m = (url || "").match(/(?:youtu\.be\/|v=|shorts\/|embed\/|live\/)([\w-]{11})/); return m ? m[1] : null; };
+  const xId = (url) => { const m = (url || "").match(/(?:x|twitter)\.com\/[^/]+\/status\/(\d+)/); return m ? m[1] : null; };
   const yes = (v) => /^(y|yes|o|true|1|ㅇ|공개)$/i.test(v || "");
   const esc = (s) => String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const catLabel1 = (k) => (C.categories.find((c) => c.key === k) || {}).label || k;
@@ -54,6 +55,12 @@
       const v = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
       return `<div class="thumb short"><img class="sbg" loading="lazy" src="${v}" alt="">` +
         `<img class="sfg" loading="lazy" src="${v}" alt=""><span class="badge">숏폼</span></div>`;
+    }
+    if (xId(it["링크"])) {
+      // X(트위터) 게시물: 썸네일 칸 이미지를 비율 그대로 가운데 + 흐림 배경
+      const v = it["썸네일"];
+      return v ? `<div class="thumb short fit"><img class="sbg" loading="lazy" src="${esc(v)}" alt=""><img class="sfg" loading="lazy" src="${esc(v)}" alt=""><span class="badge">𝕏</span></div>`
+        : `<div class="thumb"><div class="ph"><b>${esc(it["제목"])}</b><small>${esc(it["클라이언트"])}</small></div><span class="badge">𝕏</span></div>`;
     }
     const src = it["썸네일"] || (id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : "");
     const badge = id ? "" : it["링크"] ? `<span class="badge">링크 ↗</span>` : "";
@@ -116,6 +123,7 @@
       player = `<img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.6)">` +
         `<div class="open"><a class="pill dark" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">▶ 유튜브에서 보기</a></div>`;
     } else if (id) player = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&playsinline=1&origin=${encodeURIComponent(location.origin)}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen title="${esc(it["제목"])}"></iframe>`;
+    else if (xId(it["링크"])) player = `<div class="xembed" data-x="${xId(it["링크"])}"><a class="pill dark" href="${esc(it["링크"])}" target="_blank" rel="noopener">𝕏에서 보기 ↗</a></div>`;
     else {
       const bg = it["썸네일"] ? `<img src="${esc(it["썸네일"])}" alt="" style="width:100%;height:100%;object-fit:cover">` : `<div class="ph"><b>${esc(it["제목"])}</b><small>${esc(it["클라이언트"])}</small></div>`;
       player = bg + (it["링크"] ? `<div class="open"><a class="pill dark" href="${esc(it["링크"])}" target="_blank" rel="noopener">열어보기 ↗</a></div>` : "");
@@ -125,7 +133,7 @@
     const meta = [catLabel(it["카테고리"]), fmtDate(it)].filter(Boolean).join(" · ");
     $("#view").innerHTML = `<section class="watch">
       <div>
-        <div class="player${id && isShort(it) ? " short" : ""}">${player}</div>
+        <div class="player${id && isShort(it) ? " short" : ""}${!id && xId(it["링크"]) ? " x" : ""}">${player}</div>
         <div class="w-body">
           <h1 class="w-title">${esc(it["제목"])}</h1>
           <div class="owner">${ava(it["클라이언트"])}
@@ -141,6 +149,17 @@
           <div><h5>${esc(r["제목"])}</h5><span>${esc(r["클라이언트"])}</span><span>${esc(catLabel(r["카테고리"]))}</span></div></a>`).join("")}
       </aside></section>`;
     window.scrollTo(0, 0);
+    loadX();
+  }
+
+  // X 게시물 임베드 (공식 widgets.js) — 실패하면 'X에서 보기' 버튼만 남음
+  function loadX() {
+    const el = document.querySelector(".xembed"); if (!el) return;
+    const go = () => window.twttr.widgets.createTweet(el.dataset.x, el, { lang: "ko", align: "center", dnt: true })
+      .then((t) => { if (t && el.firstElementChild && el.firstElementChild.tagName === "A") el.firstElementChild.remove(); });
+    if (window.twttr && window.twttr.widgets) return go();
+    const sc = document.createElement("script"); sc.src = "https://platform.twitter.com/widgets.js"; sc.async = true;
+    sc.onload = () => window.twttr.ready(go); document.head.appendChild(sc);
   }
 
   // ── 첫 화면: 4칸 대문 ──
