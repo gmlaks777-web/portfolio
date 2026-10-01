@@ -241,12 +241,12 @@
     $("#askMail").href = `mailto:${C.contactEmail}?subject=${encodeURIComponent(title ? `[문의] ${title} 관련` : "[문의] 작업 문의")}`;
     $("#askSub").textContent = title ? `「${title}」 같은 작업, 카카오톡 오픈채팅으로 편하게 물어보세요.` : "카카오톡 오픈채팅으로 편하게 물어보세요.";
     $("#askMail").textContent = `✉ ${C.contactEmail}`;
-    $("#askDiscord").hidden = !C.discord; $("#askDiscordId").textContent = C.discord || "";
-    $("#askDiscordTip").textContent = "· 눌러서 아이디 복사";
+    $("#askDiscord").hidden = !C.discordUrl; $("#askDiscord").href = C.discordUrl || "#"; $("#askDiscordId").textContent = C.discord || "";
+    $("#askDiscordCopy").hidden = !C.discord; $("#askDiscordCopy").textContent = `디스코드 아이디 복사 (${C.discord})`;
     $("#ask").hidden = false;
   }
-  $("#askDiscord").addEventListener("click", () => {
-    const done = () => { $("#askDiscordTip").textContent = "· 복사됐어요!"; };
+  $("#askDiscordCopy").addEventListener("click", () => {
+    const done = () => { $("#askDiscordCopy").textContent = `복사됐어요! (${C.discord})`; };
     (navigator.clipboard ? navigator.clipboard.writeText(C.discord) : Promise.reject()).then(done).catch(() => { prompt("디스코드 아이디", C.discord); });
   });
   document.addEventListener("click", (e) => {
