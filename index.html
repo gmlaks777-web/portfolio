@@ -172,6 +172,13 @@
     .rel .thumb{width:150px}
     .gate{grid-template-columns:1fr;height:auto;min-height:0;padding:4px 12px 0}
     .tile{aspect-ratio:16/10}
+    /* 모바일: 장면은 위, 글자는 아래 칸 색 위에 (그림과 겹치지 않게) */
+    .tile.has-scene{aspect-ratio:auto;flex-direction:column;align-items:stretch}
+    .tile.has-scene .scene{position:relative;inset:auto;aspect-ratio:2/1;flex-shrink:0}
+    .tile.has-scene .t-in{max-width:none;padding:4px 20px 20px}
+    .tile.has-scene h2,.tile.has-scene h2.long{font-size:32px;white-space:normal}
+    .tile.has-scene p{font-size:14px;margin-top:4px}
+    .tile.has-scene .t-n{margin-top:12px}
     .actions{margin-left:auto}
     .side{padding:0 12px}
   }
@@ -216,11 +223,11 @@
   <a id="mailFoot"></a>
 </footer>
 
-<script src="config.js?v=20261001j"></script>
-<script src="portfolio-data.js?v=20261001j"></script>
-<script src="scenes-bg.js?v=20261001j"></script>
-<script src="rig.js?v=20261001j"></script>
-<script src="scenes.js?v=20261001j"></script>
-<script src="app.js?v=20261001j"></script>
+<script src="config.js?v=20261001k"></script>
+<script src="portfolio-data.js?v=20261001k"></script>
+<script src="scenes-bg.js?v=20261001k"></script>
+<script src="rig.js?v=20261001k"></script>
+<script src="scenes.js?v=20261001k"></script>
+<script src="app.js?v=20261001k"></script>
 </body>
 </html>
