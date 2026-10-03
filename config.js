@@ -13,10 +13,14 @@ window.SITE_CONFIG = {
   discordUrl: "https://discord.com/users/333744534523609098",   // 디스코드 프로필 링크
   youtube: "https://youtube.com/@feelemon_studio",
 
+  // 첫 화면 맨 위 소개 문구
+  introTitle: "기업·기관 홍보영상부터 버츄얼 유튜버 편집까지",
+  introSub: "기획·촬영·편집·모션그래픽·AI 영상, 필레몬 스튜디오가 만듭니다.",
+
   // 카테고리 순서와 표시 이름 (시트의 '카테고리' 칸에 왼쪽 키를 적으면 됩니다)
   // 첫 화면 4칸 = 아래 순서. color 는 썸네일이 없을 때 칸 배경색
   categories: [
-    { key: "공기업", scene: "public", label: "공기업", en: "PUBLIC", desc: "공기업·금융권 광고, 교육영상, 공익광고", color: "#1d3d67" },
+    { key: "공기업", scene: "public", label: "기업·기관", en: "BRAND · PUBLIC", desc: "기업·기관 홍보영상, 교육영상, 공익광고", color: "#1d3d67" },
     { key: "버츄얼", scene: "virtual", label: "버츄얼", en: "VIRTUAL", desc: "버츄얼 유튜버 롱폼·숏폼 편집", color: "#5d3cd9" },
     { key: "디자인", scene: "design", label: "MV·디자인", en: "MUSIC VIDEO · DESIGN", desc: "뮤직비디오, 모션그래픽, 로고 인트로", color: "#fdcf0a", dark: true },
     { key: "AI", scene: "ai", label: "AI 영상", en: "AI FILM", desc: "AI 생성 광고·PV", color: "#0e0e10" }
