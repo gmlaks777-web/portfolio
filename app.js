@@ -201,7 +201,23 @@
   function renderLanding() {
     mounts.forEach((m) => m.destroy()); mounts = [];
     const live = !!window.FeelemonScenes;
-    $("#view").innerHTML = `<section class="gate">${C.categories.map((c) => {
+    // 함께한 곳: 팬아트·자체 제작 제외, 버츄얼 작업이 있으면 크리에이터, 아니면 기업·기관 (작업 많은 순)
+    const self = /필레몬|자체 제작/;
+    const cnt = {}, creator = {};
+    items.forEach((it) => {
+      const n = (it["클라이언트"] || "").trim();
+      if (!n || self.test(n) || /팬아트/.test((it["형식"] || "") + n)) return;
+      cnt[n] = (cnt[n] || 0) + 1;
+      if (inCat(it, "버츄얼")) creator[n] = 1;
+    });
+    const names = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]);
+    const orgs = names.filter((n) => !creator[n]), crs = names.filter((n) => creator[n]);
+    const chipsOf = (arr) => arr.map((n) => `<span>${esc(n)}</span>`).join("");
+    $("#view").innerHTML = `<section class="intro">
+      <div><h1>${esc(C.introTitle || "필레몬 스튜디오")}</h1><p>${esc(C.introSub || "")}</p>${orgs.length ? `<p class="with">함께한 곳 · ${orgs.slice(0, 6).map((n) => `<b>${esc(n)}</b>`).join(" · ")}${orgs.length > 6 ? " 외" : ""}</p>` : ""}</div>
+      <div class="stats"><div><b>${items.length}</b><span>작업</span></div><div><b>${names.length}</b><span>함께한 곳</span></div></div>
+    </section>
+    <section class="gate">${C.categories.map((c) => {
       const n = items.filter((it) => inCat(it, c.key)).length;
       const scene = live && c.scene;
       const bg = scene ? "" : tileBg(c.key);
@@ -210,7 +226,11 @@
         <div class="t-in"><span class="t-en">${esc(c.en || "")}</span><h2${c.label.length > 4 ? ' class="long"' : ""}>${esc(c.label)}</h2><p>${esc(c.desc)}</p><span class="t-n">${n ? `작업 ${n}개 →` : "준비 중"}</span></div>
       </a>`;
     }).join("")}</section>
-    <div class="gate-all"><a class="pill light" href="#/all">전체 작업 보기</a></div>`;
+    <div class="gate-all"><a class="pill light" href="#/all">전체 작업 보기</a></div>
+    <section class="clients"><h3>함께한 곳</h3>
+      ${orgs.length ? `<div class="cl-row"><em>기업·기관</em><div class="cl-list">${chipsOf(orgs)}</div></div>` : ""}
+      ${crs.length ? `<div class="cl-row"><em>크리에이터</em><div class="cl-list">${chipsOf(crs)}</div></div>` : ""}
+    </section>`;
     if (live) document.querySelectorAll("[data-scene]").forEach((el) => mounts.push(window.FeelemonScenes.mount(el, el.dataset.scene)));
   }
 
