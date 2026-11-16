@@ -276,16 +276,25 @@
     $("#ask").hidden = false;
   }
   // 복사 완료 말풍선 (버튼 위에 잠깐 떴다 사라짐)
-  function tip(el, msg = "복사됐어요!") {
+  function tip(el, msg = "복사됐어요!", ms = 1400) {
     el.querySelectorAll(".tip").forEach((t) => t.remove());
     const t = document.createElement("span"); t.className = "tip"; t.textContent = msg;
-    el.appendChild(t); setTimeout(() => t.remove(), 1400);
+    if (ms > 1400) Object.assign(t.style, { whiteSpace: "normal", width: "230px", lineHeight: "1.45", textAlign: "center",
+      animation: `tipin .18s ease-out, tipout .25s ease-in ${(ms - 250) / 1000}s forwards` });
+    el.appendChild(t); setTimeout(() => t.remove(), ms);
   }
   // 이메일: 누르면 주소 복사 (메일 앱이 없는 PC에서도 바로 쓸 수 있게)
   $("#askMail").addEventListener("click", (e) => {
     e.preventDefault();
     const done = () => tip($("#askMail"));
     (navigator.clipboard ? navigator.clipboard.writeText(C.contactEmail) : Promise.reject()).then(done).catch(() => { prompt("이메일 주소", C.contactEmail); });
+  });
+  // 디스코드: 프로필 링크는 앱 열기 창이 뜨거나 내 화면으로만 가서 안 열림 → 아이디를 복사해 친구 추가로 안내
+  $("#askDiscord").addEventListener("click", (e) => {
+    if (!C.discord) return;
+    e.preventDefault();
+    const done = () => tip($("#askDiscord"), `${C.discord} 복사됐어요! 디스코드 '친구 추가'에 붙여넣어 주세요`, 3200);
+    (navigator.clipboard ? navigator.clipboard.writeText(C.discord) : Promise.reject()).then(done).catch(() => { prompt("디스코드 아이디", C.discord); });
   });
   document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-ask]"); if (b) { e.preventDefault(); openAsk(b.dataset.ask); return; }
