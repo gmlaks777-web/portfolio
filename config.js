@@ -10,7 +10,7 @@ window.SITE_CONFIG = {
   contactEmail: "feelemon_studio@naver.com",
   kakaoUrl: "https://open.kakao.com/o/s31UJhQi",   // 카카오톡 오픈채팅 (문의하기 창)
   discord: "Himi7487",                              // 디스코드 아이디 (복사용)
-  discordUrl: "https://discord.com/users/333744534523609098",   // 디스코드 프로필 링크
+  discordUrl: "https://discord.gg/gxFf8B26yz",   // 디스코드 서버 초대 링크 (필레몬 스튜디오 서버, 만료 없음)
   youtube: "https://youtube.com/@feelemon_studio",
 
   // 첫 화면 맨 위 소개 문구
